@@ -93,6 +93,12 @@ impl Cube {
         self.sides[4] = side2;
     }
 
+    pub fn orientation_rotate_left(&mut self) {
+        self.orientation_rotate_right();
+        self.orientation_rotate_right();
+        self.orientation_rotate_right();
+    }
+
     pub fn orientation_rotate_up(&mut self) {
         //rotate the cube so the side to the right is now the center cube
         //   1           3
@@ -105,6 +111,61 @@ impl Cube {
         self.sides[2] = side6;
         self.sides[5] = side1;
     }
+
+    pub fn orientation_rotate_down(&mut self) {
+        self.orientation_rotate_up();
+        self.orientation_rotate_up();
+    }
+
+    pub fn move_u(&mut self) {
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |YYY|
+        //|YYY|WWW|GGG|BBB|     |YYO|WWW|RGG|BBB|
+        //|YYY|WWW|GGG|BBB| --> |YYO|WWW|RGG|BBB|
+        //|YYY|WWW|GGG|BBB|     |YYO|WWW|RGG|BBB|
+        //    |OOO|                 |GGG|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        let left1 = self.sides[1].squares[0][2];
+        let left2 = self.sides[1].squares[1][2];
+        let left3 = self.sides[1].squares[2][2];
+
+        let up1 = self.sides[0].squares[2][0];
+        let up2 = self.sides[0].squares[2][1];
+        let up3 = self.sides[0].squares[2][2];
+
+        let right1 = self.sides[3].squares[0][0];
+        let right2 = self.sides[3].squares[1][0];
+        let right3 = self.sides[3].squares[2][0];
+
+        let bottom1 = self.sides[5].squares[0][0];
+        let bottom2 = self.sides[5].squares[0][1];
+        let bottom3 = self.sides[5].squares[0][2];
+
+        self.sides[1].squares[0][2] = bottom1;
+        self.sides[1].squares[1][2] = bottom2;
+        self.sides[1].squares[2][2] = bottom3;
+
+        self.sides[0].squares[2][0] = left3;
+        self.sides[0].squares[2][1] = left2;
+        self.sides[0].squares[2][2] = left1;
+
+        self.sides[3].squares[0][0] = up1;
+        self.sides[3].squares[1][0] = up2;
+        self.sides[3].squares[2][0] = up3;
+
+        self.sides[5].squares[0][0] = right3;
+        self.sides[5].squares[0][1] = right2;
+        self.sides[5].squares[0][2] = right1;
+    }
+
+    pub fn move_ui(&mut self) {
+        self.move_u();
+        self.move_u();
+        self.move_u();
+    }
+
     pub fn print(&self) {
         print!("{}", self)
     }
@@ -156,6 +217,19 @@ mod tests {
     use super::Cube;
 
     #[test]
+    fn rotate_down() {
+        //down should undo up
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let mut cube_to_rotate = cube.clone();
+        cube_to_rotate.orientation_rotate_up();
+        cube_to_rotate.orientation_rotate_down();
+        assert_eq!(
+            format!("{}", cube),
+            format!("{}", cube_to_rotate)
+        );
+    }
+
+    #[test]
     fn rotate_up() {
         let mut cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         cube.orientation_rotate_up();
@@ -177,4 +251,50 @@ mod tests {
             format!("{}", Cube::new([RED, WHITE, GREEN, BLUE, YELLOW, ORANGE])),
         );
     }
+
+    #[test]
+    fn rotate_left() {
+        //left should undo right
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let mut cube_to_rotate = cube.clone();
+        cube_to_rotate.orientation_rotate_right();
+        cube_to_rotate.orientation_rotate_left();
+        assert_eq!(
+            format!("{}", cube),
+            format!("{}", cube_to_rotate)
+        );
+    }
+
+    #[test]
+    fn move_u() {
+        let mut cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        cube.print();
+        cube.move_u();
+        let prefix = "    ";
+        let expected= format!("{}|RRR|\n\
+            {}|RRR|\n\
+            {}|YYY|\n\
+        |YYO|WWW|RGG|BBB|\n\
+        |YYO|WWW|RGG|BBB|\n\
+        |YYO|WWW|RGG|BBB|\n\
+        {}|GGG|\n\
+        {}|OOO|\n\
+        {}|OOO|\n", prefix, prefix, prefix, prefix, prefix, prefix);
+println!("{}", expected);
+        assert_eq!(format!("{}", cube), expected);
+    }
+
+    #[test]
+    fn move_ui() {
+        //ui should undo u
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let mut cube_to_move = cube.clone();
+        cube_to_move.move_u();
+        cube_to_move.move_ui();
+        assert_eq!(
+            format!("{}", cube),
+            format!("{}", cube_to_move)
+        );
+    }
+
 }
