@@ -41,13 +41,13 @@ pub struct Cube {
 }
 
 impl Side {
-fn new(color : Color) -> Side {
-    Side {
-        squares: [[color, color, color],
-            [color, color, color],
-            [color, color, color]]
+    fn new(color : Color) -> Side {
+        Side {
+            squares: [[color, color, color],
+                [color, color, color],
+                [color, color, color]]
+        }
     }
-}
 }
 
 impl Cube {
@@ -105,10 +105,15 @@ impl Cube {
         self.sides[2] = side6;
         self.sides[5] = side1;
     }
-
     pub fn print(&self) {
+        print!("{}", self)
+    }
+}
+
+impl fmt::Display for Cube {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let prefix = "    ";
-        print!(
+        write!(f,
 "{}|{}{}{}|\n\
 {}|{}{}{}|\n\
 {}|{}{}{}|\n\
@@ -155,8 +160,8 @@ mod tests {
         let mut cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         cube.orientation_rotate_up();
         assert_eq!(
-            cube,
-            Cube::new([WHITE, YELLOW, ORANGE, GREEN, BLUE, RED]),
+            format!("{}", cube),
+            format!("{}", Cube::new([WHITE, YELLOW, ORANGE, GREEN, BLUE, RED])),
         );
     }
 
@@ -168,8 +173,8 @@ mod tests {
         //  2345   ---> 3452
         //   6           6
         assert_eq!(
-            cube,
-            Cube::new([RED, WHITE, GREEN, BLUE, YELLOW, ORANGE]),
+            format!("{}", cube),
+            format!("{}", Cube::new([RED, WHITE, GREEN, BLUE, YELLOW, ORANGE])),
         );
     }
 }
