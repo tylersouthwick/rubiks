@@ -117,7 +117,7 @@ impl Cube {
         self.orientation_rotate_up();
     }
 
-    pub fn move_u(&mut self) {
+    pub fn move_f(&mut self) {
         //    |RRR|                 |RRR|
         //    |RRR|                 |RRR|
         //    |RRR|                 |YYY|
@@ -160,10 +160,10 @@ impl Cube {
         self.sides[5].squares[0][2] = right1;
     }
 
-    pub fn move_ui(&mut self) {
-        self.move_u();
-        self.move_u();
-        self.move_u();
+    pub fn move_fi(&mut self) {
+        self.move_f();
+        self.move_f();
+        self.move_f();
     }
 
     pub fn print(&self) {
@@ -266,10 +266,10 @@ mod tests {
     }
 
     #[test]
-    fn move_u() {
+    fn move_f() {
         let mut cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         cube.print();
-        cube.move_u();
+        cube.move_f();
         let prefix = "    ";
         let expected= format!("{}|RRR|\n\
             {}|RRR|\n\
@@ -285,12 +285,12 @@ println!("{}", expected);
     }
 
     #[test]
-    fn move_ui() {
+    fn move_fi() {
         //ui should undo u
         let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         let mut cube_to_move = cube.clone();
-        cube_to_move.move_u();
-        cube_to_move.move_ui();
+        cube_to_move.move_f();
+        cube_to_move.move_fi();
         assert_eq!(
             format!("{}", cube),
             format!("{}", cube_to_move)
