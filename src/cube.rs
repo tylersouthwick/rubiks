@@ -33,19 +33,19 @@ enum Movement {
 */
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct Side {
+pub struct Face {
     squares: [[Color; 3]; 3 ]
 }
 
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Cube {
-    sides : [Side; 6]
+    faces : [Face; 6]
 }
 
-impl Side {
-    fn new(color : Color) -> Side {
-        Side {
+impl Face {
+    fn new(color : Color) -> Face {
+        Face {
             squares: [[color, color, color],
                 [color, color, color],
                 [color, color, color]]
@@ -110,15 +110,15 @@ impl Side {
 
 impl Cube {
 
-    pub fn new(sides : [Color; 6]) -> Self {
+    pub fn new(faces : [Color; 6]) -> Self {
         Cube {
-            sides: [
-                Side::new(sides[0]),
-                Side::new(sides[1]),
-                Side::new(sides[2]),
-                Side::new(sides[3]),
-                Side::new(sides[4]),
-                Side::new(sides[5])
+            faces: [
+                Face::new(faces[0]),
+                Face::new(faces[1]),
+                Face::new(faces[2]),
+                Face::new(faces[3]),
+                Face::new(faces[4]),
+                Face::new(faces[5])
             ]
         }
     }
@@ -128,18 +128,18 @@ impl Cube {
     }
 
     pub fn orientation_rotate_right(&mut self) {
-        //rotate the cube so the side to the right is now the center cube
+        //rotate the cube so the face to the right is now the center cube
         //   1           1
         //  2345   ---> 3452
         //   6           6
-        let side2 = self.sides[1];
-        let side3 = self.sides[2];
-        let side4 = self.sides[3];
-        let side5 = self.sides[4];
-        self.sides[1] = side3;
-        self.sides[2] = side4;
-        self.sides[3] = side5;
-        self.sides[4] = side2;
+        let face2 = self.faces[1];
+        let face3 = self.faces[2];
+        let face4 = self.faces[3];
+        let face5 = self.faces[4];
+        self.faces[1] = face3;
+        self.faces[2] = face4;
+        self.faces[3] = face5;
+        self.faces[4] = face2;
     }
 
     pub fn orientation_rotate_left(&mut self) {
@@ -149,16 +149,16 @@ impl Cube {
     }
 
     pub fn orientation_rotate_up(&mut self) {
-        //rotate the cube so the side to the right is now the center cube
+        //rotate the cube so the face to the right is now the center cube
         //   1           3
         //  2345   ---> 2645
         //   6           1
-        let side1 = self.sides[0];
-        let side3 = self.sides[2];
-        let side6 = self.sides[5];
-        self.sides[0] = side3;
-        self.sides[2] = side6;
-        self.sides[5] = side1;
+        let face1 = self.faces[0];
+        let face3 = self.faces[2];
+        let face6 = self.faces[5];
+        self.faces[0] = face3;
+        self.faces[2] = face6;
+        self.faces[5] = face1;
     }
 
     pub fn orientation_rotate_down(&mut self) {
@@ -179,20 +179,20 @@ impl Cube {
         //    |GGG|                 |OOO|
         //    |GGG|                 |OOO|
         //    |GGG|                 |OOO|
-        //sides 2 & 4 do not change
+        //faces 2 & 4 do not change
         //1 -> 0
         //5 -> 1
         //0 -> 3
         //3 -> 5
-        let side0 = self.sides[0];
-        let side1 = self.sides[1];
-        let side3 = self.sides[3];
-        let side5 = self.sides[5];
+        let face0 = self.faces[0];
+        let face1 = self.faces[1];
+        let face3 = self.faces[3];
+        let face5 = self.faces[5];
 
-        self.sides[0] = side1;
-        self.sides[1] = side5;
-        self.sides[3] = side0;
-        self.sides[5] = side3;
+        self.faces[0] = face1;
+        self.faces[1] = face5;
+        self.faces[3] = face0;
+        self.faces[5] = face3;
 
 /*
         println!("----------- before rotating");
@@ -200,12 +200,12 @@ impl Cube {
         println!("----------- after rotating");
         */
         //the center has to rotate
-        self.sides[2].rotate_right();
-        self.sides[1].rotate_right();
-        self.sides[3].rotate_right();
-        self.sides[4].rotate_left();
-        self.sides[0].rotate_right();
-        self.sides[5].rotate_right();
+        self.faces[2].rotate_right();
+        self.faces[1].rotate_right();
+        self.faces[3].rotate_right();
+        self.faces[4].rotate_left();
+        self.faces[0].rotate_right();
+        self.faces[5].rotate_right();
     }
 
     pub fn move_f(&mut self) {
@@ -218,39 +218,39 @@ impl Cube {
         //    |OOO|                 |GGG|
         //    |OOO|                 |OOO|
         //    |OOO|                 |OOO|
-        let left1 = self.sides[1].squares[0][2];
-        let left2 = self.sides[1].squares[1][2];
-        let left3 = self.sides[1].squares[2][2];
+        let left1 = self.faces[1].squares[0][2];
+        let left2 = self.faces[1].squares[1][2];
+        let left3 = self.faces[1].squares[2][2];
 
-        let up1 = self.sides[0].squares[2][0];
-        let up2 = self.sides[0].squares[2][1];
-        let up3 = self.sides[0].squares[2][2];
+        let up1 = self.faces[0].squares[2][0];
+        let up2 = self.faces[0].squares[2][1];
+        let up3 = self.faces[0].squares[2][2];
 
-        let right1 = self.sides[3].squares[0][0];
-        let right2 = self.sides[3].squares[1][0];
-        let right3 = self.sides[3].squares[2][0];
+        let right1 = self.faces[3].squares[0][0];
+        let right2 = self.faces[3].squares[1][0];
+        let right3 = self.faces[3].squares[2][0];
 
-        let bottom1 = self.sides[5].squares[0][0];
-        let bottom2 = self.sides[5].squares[0][1];
-        let bottom3 = self.sides[5].squares[0][2];
+        let bottom1 = self.faces[5].squares[0][0];
+        let bottom2 = self.faces[5].squares[0][1];
+        let bottom3 = self.faces[5].squares[0][2];
 
-        self.sides[1].squares[0][2] = bottom1;
-        self.sides[1].squares[1][2] = bottom2;
-        self.sides[1].squares[2][2] = bottom3;
+        self.faces[1].squares[0][2] = bottom1;
+        self.faces[1].squares[1][2] = bottom2;
+        self.faces[1].squares[2][2] = bottom3;
 
-        self.sides[0].squares[2][0] = left3;
-        self.sides[0].squares[2][1] = left2;
-        self.sides[0].squares[2][2] = left1;
+        self.faces[0].squares[2][0] = left3;
+        self.faces[0].squares[2][1] = left2;
+        self.faces[0].squares[2][2] = left1;
 
-        self.sides[3].squares[0][0] = up1;
-        self.sides[3].squares[1][0] = up2;
-        self.sides[3].squares[2][0] = up3;
+        self.faces[3].squares[0][0] = up1;
+        self.faces[3].squares[1][0] = up2;
+        self.faces[3].squares[2][0] = up3;
 
-        self.sides[5].squares[0][0] = right3;
-        self.sides[5].squares[0][1] = right2;
-        self.sides[5].squares[0][2] = right1;
+        self.faces[5].squares[0][0] = right3;
+        self.faces[5].squares[0][1] = right2;
+        self.faces[5].squares[0][2] = right1;
 
-        self.sides[2].rotate_right();
+        self.faces[2].rotate_right();
     }
 
     pub fn move_fi(&mut self) {
@@ -269,39 +269,39 @@ impl Cube {
         //    |OOO|                 |OOB|
         //    |OOO|                 |OOB|
         //    |OOO|                 |OOB|
-        let up1 = self.sides[0].squares[0][2];
-        let up2 = self.sides[0].squares[1][2];
-        let up3 = self.sides[0].squares[2][2];
+        let up1 = self.faces[0].squares[0][2];
+        let up2 = self.faces[0].squares[1][2];
+        let up3 = self.faces[0].squares[2][2];
 
-        let right1 = self.sides[4].squares[0][0];
-        let right2 = self.sides[4].squares[1][0];
-        let right3 = self.sides[4].squares[2][0];
+        let right1 = self.faces[4].squares[0][0];
+        let right2 = self.faces[4].squares[1][0];
+        let right3 = self.faces[4].squares[2][0];
 
-        let bottom1 = self.sides[5].squares[0][2];
-        let bottom2 = self.sides[5].squares[1][2];
-        let bottom3 = self.sides[5].squares[2][2];
+        let bottom1 = self.faces[5].squares[0][2];
+        let bottom2 = self.faces[5].squares[1][2];
+        let bottom3 = self.faces[5].squares[2][2];
 
-        let center02 = self.sides[2].squares[0][2];
-        let center12 = self.sides[2].squares[1][2];
-        let center22 = self.sides[2].squares[2][2];
+        let center02 = self.faces[2].squares[0][2];
+        let center12 = self.faces[2].squares[1][2];
+        let center22 = self.faces[2].squares[2][2];
 
-        self.sides[2].squares[0][2] = bottom1;
-        self.sides[2].squares[1][2] = bottom2;
-        self.sides[2].squares[2][2] = bottom3;
+        self.faces[2].squares[0][2] = bottom1;
+        self.faces[2].squares[1][2] = bottom2;
+        self.faces[2].squares[2][2] = bottom3;
 
-        self.sides[0].squares[0][2] = center02;
-        self.sides[0].squares[1][2] = center12;
-        self.sides[0].squares[2][2] = center22;
+        self.faces[0].squares[0][2] = center02;
+        self.faces[0].squares[1][2] = center12;
+        self.faces[0].squares[2][2] = center22;
 
-        self.sides[4].squares[0][0] = up3;
-        self.sides[4].squares[1][0] = up2;
-        self.sides[4].squares[2][0] = up1;
+        self.faces[4].squares[0][0] = up3;
+        self.faces[4].squares[1][0] = up2;
+        self.faces[4].squares[2][0] = up1;
 
-        self.sides[5].squares[0][2] = right3;
-        self.sides[5].squares[1][2] = right2;
-        self.sides[5].squares[2][2] = right1;
+        self.faces[5].squares[0][2] = right3;
+        self.faces[5].squares[1][2] = right2;
+        self.faces[5].squares[2][2] = right1;
 
-        self.sides[3].rotate_right();
+        self.faces[3].rotate_right();
     }
 
     pub fn move_ri(&mut self) {
@@ -329,28 +329,28 @@ impl fmt::Display for Cube {
 {}|{}{}{}|\n\
 {}|{}{}{}|\n\
 ",
-            prefix, self.sides[0].squares[0][0], self.sides[0].squares[0][1], self.sides[0].squares[0][2],
-            prefix, self.sides[0].squares[1][0], self.sides[0].squares[1][1], self.sides[0].squares[1][2],
-            prefix, self.sides[0].squares[2][0], self.sides[0].squares[2][1], self.sides[0].squares[2][2],
+            prefix, self.faces[0].squares[0][0], self.faces[0].squares[0][1], self.faces[0].squares[0][2],
+            prefix, self.faces[0].squares[1][0], self.faces[0].squares[1][1], self.faces[0].squares[1][2],
+            prefix, self.faces[0].squares[2][0], self.faces[0].squares[2][1], self.faces[0].squares[2][2],
             //first long row
-            self.sides[1].squares[0][0], self.sides[1].squares[0][1], self.sides[1].squares[0][2],
-            self.sides[2].squares[0][0], self.sides[2].squares[0][1], self.sides[2].squares[0][2],
-            self.sides[3].squares[0][0], self.sides[3].squares[0][1], self.sides[3].squares[0][2],
-            self.sides[4].squares[0][0], self.sides[4].squares[0][1], self.sides[4].squares[0][2],
+            self.faces[1].squares[0][0], self.faces[1].squares[0][1], self.faces[1].squares[0][2],
+            self.faces[2].squares[0][0], self.faces[2].squares[0][1], self.faces[2].squares[0][2],
+            self.faces[3].squares[0][0], self.faces[3].squares[0][1], self.faces[3].squares[0][2],
+            self.faces[4].squares[0][0], self.faces[4].squares[0][1], self.faces[4].squares[0][2],
             //second long row
-            self.sides[1].squares[1][0], self.sides[1].squares[1][1], self.sides[1].squares[1][2],
-            self.sides[2].squares[1][0], self.sides[2].squares[1][1], self.sides[2].squares[1][2],
-            self.sides[3].squares[1][0], self.sides[3].squares[1][1], self.sides[3].squares[1][2],
-            self.sides[4].squares[1][0], self.sides[4].squares[1][1], self.sides[4].squares[1][2],
+            self.faces[1].squares[1][0], self.faces[1].squares[1][1], self.faces[1].squares[1][2],
+            self.faces[2].squares[1][0], self.faces[2].squares[1][1], self.faces[2].squares[1][2],
+            self.faces[3].squares[1][0], self.faces[3].squares[1][1], self.faces[3].squares[1][2],
+            self.faces[4].squares[1][0], self.faces[4].squares[1][1], self.faces[4].squares[1][2],
             //third long row
-            self.sides[1].squares[2][0], self.sides[1].squares[2][1], self.sides[1].squares[2][2],
-            self.sides[2].squares[2][0], self.sides[2].squares[2][1], self.sides[2].squares[2][2],
-            self.sides[3].squares[2][0], self.sides[3].squares[2][1], self.sides[3].squares[2][2],
-            self.sides[4].squares[2][0], self.sides[4].squares[2][1], self.sides[4].squares[2][2],
+            self.faces[1].squares[2][0], self.faces[1].squares[2][1], self.faces[1].squares[2][2],
+            self.faces[2].squares[2][0], self.faces[2].squares[2][1], self.faces[2].squares[2][2],
+            self.faces[3].squares[2][0], self.faces[3].squares[2][1], self.faces[3].squares[2][2],
+            self.faces[4].squares[2][0], self.faces[4].squares[2][1], self.faces[4].squares[2][2],
             //last row
-            prefix, self.sides[5].squares[0][0], self.sides[5].squares[0][1], self.sides[5].squares[0][2],
-            prefix, self.sides[5].squares[1][0], self.sides[5].squares[1][1], self.sides[5].squares[1][2],
-            prefix, self.sides[5].squares[2][0], self.sides[5].squares[2][1], self.sides[5].squares[2][2]
+            prefix, self.faces[5].squares[0][0], self.faces[5].squares[0][1], self.faces[5].squares[0][2],
+            prefix, self.faces[5].squares[1][0], self.faces[5].squares[1][1], self.faces[5].squares[1][2],
+            prefix, self.faces[5].squares[2][0], self.faces[5].squares[2][1], self.faces[5].squares[2][2]
                 )
     }
 }
