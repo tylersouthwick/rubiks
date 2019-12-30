@@ -1,9 +1,10 @@
 
 mod cube;
+mod array_cube;
 mod solver;
 
 fn main() {
-    let mut cube = cube::Cube::random();
+    let mut cube = array_cube::ArrayCube::random();
     cube.print();
     solver::solve(&mut cube);
     println!("Hello, world!");
