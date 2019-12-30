@@ -1,11 +1,14 @@
 
 mod cube;
+mod solver;
 
 fn main() {
-    let cube = cube::Cube::default();
+    let mut cube = cube::Cube::random();
     cube.print();
+    solver::solve(&mut cube);
     println!("Hello, world!");
 
+    /*
     let mut mixed_cube = cube.clone();
     let mut i = 0;
     loop {
@@ -22,4 +25,5 @@ fn main() {
             break;
         }
     }
+    */
 }

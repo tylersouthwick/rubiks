@@ -21,16 +21,28 @@ impl fmt::Display for Color {
     }
 }
 
-/*
-enum Movement {
-    R, RI,
-    L, LI,
-    B, BI,
-    D, DI,
-    F, FI,
-    U, UI,
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum FaceOrientation {
+    RIGHT,
+    LEFT,
+    BACK,
+    DOWN,
+    FRONT,
+    UP,
 }
-*/
+
+impl FaceOrientation {
+    fn fromIndex(i : usize) -> FaceOrientation {
+        match i {
+            0 => FaceOrientation::UP,
+            1 => FaceOrientation::LEFT,
+            2 => FaceOrientation::FRONT,
+            3 => FaceOrientation::RIGHT,
+            4 => FaceOrientation::BACK,
+            _ => FaceOrientation::DOWN,
+        }
+    }
+}
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Face {
@@ -123,8 +135,38 @@ impl Cube {
         }
     }
 
+    pub fn random() -> Self {
+        let mut cube = Cube::default();
+        for _ in 0..500 {
+            cube.rotate_right();
+            cube.move_r();
+            cube.orientation_rotate_left();
+        }
+        cube
+    }
+
     pub fn default() -> Self {
         Cube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN])
+    }
+
+    pub fn findFace(self, faceOrientation : FaceOrientation) -> Color {
+        match faceOrientation {
+            RIGHT => self.faces[3].squares[1][1],
+            LEFT => self.faces[1].squares[1][1],
+            BACK => self.faces[4].squares[1][1],
+            DOWN => self.faces[5].squares[1][1],
+            FRONT => self.faces[2].squares[1][1],
+            UP => self.faces[0].squares[1][1],
+        }
+    }
+
+    pub fn findCenter(self, color : Color) -> FaceOrientation {
+        for i in 0..4 {
+            if self.faces[i].squares[1][1] == color {
+                return FaceOrientation::fromIndex(i)
+            }
+        }
+        return FaceOrientation::DOWN;
     }
 
     pub fn orientation_rotate_right(&mut self) {
@@ -164,6 +206,12 @@ impl Cube {
     pub fn orientation_rotate_down(&mut self) {
         self.orientation_rotate_up();
         self.orientation_rotate_up();
+    }
+
+    pub fn rotate_left(&mut self) {
+        self.rotate_right();
+        self.rotate_right();
+        self.rotate_right();
     }
 
     pub fn rotate_right(&mut self) {
