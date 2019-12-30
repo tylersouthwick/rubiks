@@ -2,6 +2,7 @@
 mod cube;
 mod array_cube;
 mod solver;
+mod mover;
 
 fn main() {
     let mut cube = array_cube::ArrayCube::random();

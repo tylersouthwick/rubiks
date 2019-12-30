@@ -40,3 +40,12 @@ impl FaceOrientation {
         }
     }
 }
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum RotationDirection {
+    RIGHT,
+    LEFT,
+    DOWN,
+    UP,
+}
+

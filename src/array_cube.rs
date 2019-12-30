@@ -3,6 +3,7 @@ use crate::cube::Color;
 use crate::cube::Color::*;
 use crate::cube::FaceOrientation;
 use crate::cube::FaceOrientation::*;
+use crate::cube::RotationDirection;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 struct ArrayFace {
@@ -109,26 +110,6 @@ impl ArrayCube {
         ArrayCube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN])
     }
 
-    pub fn findFace(self, faceOrientation : FaceOrientation) -> Color {
-        match faceOrientation {
-            RIGHT => self.faces[3].squares[1][1],
-            LEFT => self.faces[1].squares[1][1],
-            BACK => self.faces[4].squares[1][1],
-            DOWN => self.faces[5].squares[1][1],
-            FRONT => self.faces[2].squares[1][1],
-            UP => self.faces[0].squares[1][1],
-        }
-    }
-
-    pub fn findCenter(self, color : Color) -> FaceOrientation {
-        for i in 0..4 {
-            if self.faces[i].squares[1][1] == color {
-                return FaceOrientation::fromIndex(i)
-            }
-        }
-        return FaceOrientation::DOWN;
-    }
-
     pub fn orientation_rotate_right(&mut self) {
         //rotate the cube so the face to the right is now the center cube
         //   1           1
@@ -153,17 +134,23 @@ impl ArrayCube {
     pub fn orientation_rotate_up(&mut self) {
         //rotate the cube so the face to the right is now the center cube
         //   1           3
-        //  2345   ---> 2645
-        //   6           1
+        //  2345   ---> 2641
+        //   6           5
         let face1 = self.faces[0];
         let face3 = self.faces[2];
+        let face5 = self.faces[4];
         let face6 = self.faces[5];
         self.faces[0] = face3;
         self.faces[2] = face6;
-        self.faces[5] = face1;
+        self.faces[4] = face1;
+        self.faces[5] = face5;
+
+        self.faces[1].rotate_right();
+        self.faces[3].rotate_right();
     }
 
     pub fn orientation_rotate_down(&mut self) {
+        self.orientation_rotate_up();
         self.orientation_rotate_up();
         self.orientation_rotate_up();
     }
@@ -267,6 +254,15 @@ impl ArrayCube {
         self.move_f();
     }
 
+    pub fn move_u(&mut self) {
+    }
+    pub fn move_d(&mut self) {
+    }
+    pub fn move_b(&mut self) {
+    }
+    pub fn move_l(&mut self) {
+    }
+
     pub fn move_r(&mut self) {
         //    |RRR|                 |RRW|
         //    |RRR|                 |RRW|
@@ -318,9 +314,51 @@ impl ArrayCube {
         self.move_r();
     }
 
+    pub fn twist(&mut self, face_orientation : FaceOrientation) {
+        match face_orientation {
+            RIGHT => self.move_r(),
+            LEFT => self.move_l(),
+            BACK => self.move_b(),
+            DOWN => self.move_d(),
+            FRONT => self.move_f(),
+            UP => self.move_u(),
+        }
+    }
+
+    pub fn rotate(&mut self, rotation_direction : RotationDirection) {
+        match rotation_direction {
+            RotationDirection::RIGHT => self.orientation_rotate_right(),
+            RotationDirection::LEFT => self.orientation_rotate_left(),
+            RotationDirection::DOWN => self.orientation_rotate_down(),
+            RotationDirection::UP => self.orientation_rotate_up()
+        }
+    }
+
+    pub fn findFace(self, faceOrientation : FaceOrientation) -> Color {
+        match faceOrientation {
+            RIGHT => self.faces[3].squares[1][1],
+            LEFT => self.faces[1].squares[1][1],
+            BACK => self.faces[4].squares[1][1],
+            DOWN => self.faces[5].squares[1][1],
+            FRONT => self.faces[2].squares[1][1],
+            UP => self.faces[0].squares[1][1],
+        }
+    }
+
+    pub fn findCenter(self, color : Color) -> FaceOrientation {
+        for i in 0..5 {
+            if self.faces[i].squares[1][1] == color {
+                return FaceOrientation::fromIndex(i)
+            }
+        }
+        println!("could not find color {}", color);
+        return FaceOrientation::DOWN;
+    }
+
     pub fn print(&self) {
         print!("{}", self)
     }
+
 }
 
 impl fmt::Display for ArrayCube {
@@ -361,6 +399,7 @@ impl fmt::Display for ArrayCube {
             prefix, self.faces[5].squares[2][0], self.faces[5].squares[2][1], self.faces[5].squares[2][2]
                 )
     }
+
 }
 
 #[cfg(test)]
@@ -371,7 +410,7 @@ mod tests {
     #[test]
     fn rotate_down() {
         //down should undo up
-        let cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let cube = ArrayCube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
         let mut cube_to_rotate = cube.clone();
         cube_to_rotate.orientation_rotate_up();
         cube_to_rotate.orientation_rotate_down();
@@ -383,11 +422,11 @@ mod tests {
 
     #[test]
     fn rotate_up() {
-        let mut cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let mut cube = ArrayCube::new([RED, BLUE, WHITE, GREEN, YELLOW, ORANGE]);
         cube.orientation_rotate_up();
         assert_eq!(
             format!("{}", cube),
-            format!("{}", ArrayCube::new([WHITE, YELLOW, ORANGE, GREEN, BLUE, RED])),
+            format!("{}", ArrayCube::new([WHITE, BLUE, ORANGE, GREEN, RED, YELLOW])),
         );
     }
 
@@ -585,3 +624,4 @@ println!("{}", expected);
         assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
     }
 }
+
