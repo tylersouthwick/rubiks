@@ -1,4 +1,6 @@
 use std::fmt;
+use crate::cube::Edge;
+use crate::cube::EdgePiece;
 use crate::cube::Color;
 use crate::cube::Color::*;
 use crate::cube::FaceOrientation;
@@ -108,6 +110,58 @@ impl ArrayCube {
 
     pub fn default() -> Self {
         ArrayCube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN])
+    }
+
+    fn find_face(self, face_orientation : FaceOrientation) -> ArrayFace {
+        match face_orientation {
+            RIGHT => self.faces[3],
+            LEFT => self.faces[1],
+            BACK => self.faces[4],
+            DOWN => self.faces[5],
+            FRONT => self.faces[2],
+            UP => self.faces[0],
+        }
+    }
+
+    fn find_adjacent_edge_piece(self, face_orientation : FaceOrientation, x : usize, y : usize) -> EdgePiece {
+        let (adjacent_face_orientation, adjacent_x, adjacent_y) = match (face_orientation, x, y) {
+            (UP, 0, 1) => (BACK, 0, 1),
+            (UP, 1, 0) => (LEFT, 0, 1),
+            (UP, 1, 2) => (RIGHT, 0, 1),
+            (UP, 2, 1) => (FRONT, 0, 1),
+            (LEFT, 0, 1) => (UP, 1, 0),
+            (LEFT, 1, 0) => (BACK, 1, 2),
+            (LEFT, 1, 2) => (FRONT, 1, 0),
+            (LEFT, 2, 1) => (DOWN, 0, 1),
+            _ => (UP, 0, 1)
+        };
+        EdgePiece {
+            face_orientation: adjacent_face_orientation,
+            color: self.find_face(adjacent_face_orientation).squares[adjacent_x][adjacent_y],
+        }
+    }
+
+    pub fn find_edge(self, color1 : Color, color2 : Color) -> Edge {
+        for face_index in 0..5 {
+            let face = self.faces[face_index];
+            let face_orientation = FaceOrientation::fromIndex(face_index);
+            for square in vec![[0, 1], [1, 0], [1, 2], [2, 1]] {
+                let square_color = face.squares[square[0]][square[1]];
+                let adjacent_piece = self.find_adjacent_edge_piece(face_orientation, square[0], square[1]);
+
+                if (square_color == color1 && adjacent_piece.color  == color2) || (square_color == color2 && adjacent_piece.color == color1) {
+                    return Edge {
+                        side1: EdgePiece {
+                            color: square_color,
+                            face_orientation: face_orientation
+                        },
+                        side2: adjacent_piece
+                    }
+                }
+
+            }
+        }
+        panic!("could not find edge");
     }
 
     pub fn orientation_rotate_right(&mut self) {
@@ -406,6 +460,75 @@ impl fmt::Display for ArrayCube {
 mod tests {
     use super::Color::*;
     use super::ArrayCube;
+
+    mod edges {
+        use super::super::*;
+        macro_rules! find_edge_tests {
+            ($($name:ident: $value:expr,)*) => {
+                $(
+                    #[test]
+                    fn $name() {
+                        let cube = ArrayCube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
+                        let expected = $value;
+                        assert_eq!(expected, cube.find_edge(expected.side1.color, expected.side2.color));
+                    }
+                )*
+            }
+        }
+
+        find_edge_tests! {
+                edge_blue_orange: Edge {
+                        side1: EdgePiece {
+                                color: BLUE,
+                                face_orientation: UP,
+                        },
+                        side2: EdgePiece {
+                                color: ORANGE,
+                                face_orientation: LEFT,
+                        },
+                },
+                edge_blue_white: Edge {
+                        side1: EdgePiece {
+                                color: BLUE,
+                                face_orientation: UP,
+                        },
+                        side2: EdgePiece {
+                                color: WHITE,
+                                face_orientation: FRONT,
+                        },
+                },
+                edge_blue_red: Edge {
+                        side1: EdgePiece {
+                                color: BLUE,
+                                face_orientation: UP,
+                        },
+                        side2: EdgePiece {
+                                color: RED,
+                                face_orientation: RIGHT,
+                        },
+                },
+                edge_blue_yellow: Edge {
+                        side1: EdgePiece {
+                                color: BLUE,
+                                face_orientation: UP,
+                        },
+                        side2: EdgePiece {
+                                color: YELLOW,
+                                face_orientation: BACK,
+                        },
+                },
+        }
+        /*
+        #[test]
+        fn find_edge() {
+            test_edges(cube, (ORANGE, LEFT, BLUE, UP));
+            test_edges(cube, (BLUE, UP, ORANGE, LEFT));
+            test_edges(cube, (BLUE, UP, WHITE, FRONT));
+            test_edges(cube, (BLUE, UP, RED, RIGHT));
+            test_edges(cube, (BLUE, UP, YELLOW, BACK));
+        }
+        */
+    }
 
     #[test]
     fn rotate_down() {

@@ -1,6 +1,18 @@
 use std::fmt;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+pub struct EdgePiece {
+    pub color : Color,
+    pub face_orientation : FaceOrientation,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Edge {
+    pub side1 : EdgePiece,
+    pub side2 : EdgePiece,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Color {
     RED, YELLOW, WHITE, GREEN, BLUE, ORANGE,
 }
