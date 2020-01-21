@@ -413,6 +413,62 @@ impl ArrayCube {
         print!("{}", self)
     }
 
+    fn ansi_format_convert(color : ansi_term::Colour) -> ansi_term::ANSIString<'static> {
+            ansi_term::Style::new().on(color).fg(ansi_term::Colour::Black).paint(" ")
+    }
+
+    fn find_ansi_string(&self, face : usize, x : usize, y : usize) -> ansi_term::ANSIString<'static> {
+        ArrayCube::ansi_format_convert(match self.faces[face].squares[x][y] {
+            Color::RED => ansi_term::Colour::Red,
+            Color::YELLOW => ansi_term::Colour::Yellow,
+            Color::WHITE => ansi_term::Colour::White,
+            Color::GREEN => ansi_term::Colour::Green,
+            Color::BLUE => ansi_term::Colour::Blue,
+            Color::ORANGE => ansi_term::Colour::Purple,
+        })
+    }
+
+    pub fn ansi_print(&self) {
+        //print!("{}", self.ansi_format())
+        self.ansi_format();
+    }
+
+    fn ansi_prefix<'a>() -> ansi_term::ANSIString<'a> {
+        ansi_term::Style::new().paint("   ")
+    }
+    fn ansi_newline<'a>() -> ansi_term::ANSIString<'a> {
+        ansi_term::Style::new().paint("\n")
+    }
+    fn ansi_format(&self) {
+        let strings : &[ansi_term::ANSIString<'static>] = &[
+        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 0, 0), self.find_ansi_string(0, 0, 1), self.find_ansi_string(0, 0, 2), ArrayCube::ansi_newline(),
+        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 1, 0), self.find_ansi_string(0, 1, 1), self.find_ansi_string(0, 1, 2), ArrayCube::ansi_newline(),
+        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 2, 0), self.find_ansi_string(0, 2, 1), self.find_ansi_string(0, 2, 2), ArrayCube::ansi_newline(),
+        //first long row
+        self.find_ansi_string(1, 0, 0), self.find_ansi_string(1, 0, 1), self.find_ansi_string(1, 0, 2),
+        self.find_ansi_string(2, 0, 0), self.find_ansi_string(2, 0, 1), self.find_ansi_string(2, 0, 2),
+        self.find_ansi_string(3, 0, 0), self.find_ansi_string(3, 0, 1), self.find_ansi_string(3, 0, 2),
+        self.find_ansi_string(4, 0, 0), self.find_ansi_string(4, 0, 1), self.find_ansi_string(4, 0, 2),
+        ArrayCube::ansi_newline(),
+        //second long row
+        self.find_ansi_string(1, 1, 0), self.find_ansi_string(1, 1, 1), self.find_ansi_string(1, 1, 2),
+        self.find_ansi_string(2, 1, 0), self.find_ansi_string(2, 1, 1), self.find_ansi_string(2, 1, 2),
+        self.find_ansi_string(3, 1, 0), self.find_ansi_string(3, 1, 1), self.find_ansi_string(3, 1, 2),
+        self.find_ansi_string(4, 1, 0), self.find_ansi_string(4, 1, 1), self.find_ansi_string(4, 1, 2),
+        ArrayCube::ansi_newline(),
+        //third long row
+        self.find_ansi_string(1, 2, 0), self.find_ansi_string(1, 2, 1), self.find_ansi_string(1, 2, 2),
+        self.find_ansi_string(2, 2, 0), self.find_ansi_string(2, 2, 1), self.find_ansi_string(2, 2, 2),
+        self.find_ansi_string(3, 2, 0), self.find_ansi_string(3, 2, 1), self.find_ansi_string(3, 2, 2),
+        self.find_ansi_string(4, 2, 0), self.find_ansi_string(4, 2, 1), self.find_ansi_string(4, 2, 2),
+        ArrayCube::ansi_newline(),
+        //last row
+        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 0, 0), self.find_ansi_string(5, 0, 1), self.find_ansi_string(5, 0, 2), ArrayCube::ansi_newline(),
+        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 1, 0), self.find_ansi_string(5, 1, 1), self.find_ansi_string(5, 1, 2), ArrayCube::ansi_newline(),
+        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 2, 0), self.find_ansi_string(5, 2, 1), self.find_ansi_string(5, 2, 2)
+            ];
+        println!("{}", ansi_term::ANSIStrings(strings));
+    }
 }
 
 impl fmt::Display for ArrayCube {

@@ -1,13 +1,15 @@
 
+extern crate ansi_term;
+
 mod cube;
 mod array_cube;
 mod solver;
 mod mover;
 
 fn main() {
-    let mut cube = array_cube::ArrayCube::random();
-    cube.print();
-    solver::solve(&mut cube);
+    let mut cube = array_cube::ArrayCube::default();//random();
+    cube.ansi_print();
+    //solver::solve(&mut cube);
     println!("Hello, world!");
 
     /*
