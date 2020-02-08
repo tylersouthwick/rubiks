@@ -1,9 +1,9 @@
-use crate::array_cube::ArrayCube;
+use crate::array_cube::Cube;
 use crate::cube::FaceOrientation;
 use crate::cube::FaceOrientation::*;
 use crate::cube::Color;
 
-pub fn orient_cube(cube : &mut ArrayCube, face_orientation : FaceOrientation, color : Color) {
+pub fn orient_cube(cube : &mut Cube, face_orientation : FaceOrientation, color : Color) {
     let current_face = cube.findCenter(color);
     println!("move {} from {:?} to {:?}", color, current_face, face_orientation);
     match (current_face, face_orientation) {
@@ -95,7 +95,7 @@ mod tests {
     use super::orient_cube;
 
     fn do_test(face_orientation : FaceOrientation, color : Color) {
-        let mut cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         orient_cube(&mut cube, face_orientation, color);
         println!("color on {:?}: {}", face_orientation, cube.findFace(face_orientation));
         assert_eq!(cube.findFace(face_orientation), color);

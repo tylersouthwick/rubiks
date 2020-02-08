@@ -7,7 +7,7 @@ mod solver;
 mod mover;
 
 fn main() {
-    let mut cube = array_cube::ArrayCube::default();//random();
+    let mut cube = array_cube::Cube::default();//random();
     cube.move_r();
     cube.ansi_print();
     solver::solve(&mut cube);

@@ -21,7 +21,7 @@ struct ArrayFace {
 
 
 #[derive(Clone, Copy, Debug, PartialEq)]
-pub struct ArrayCube {
+pub struct Cube {
     faces : [ArrayFace; 6]
 }
 
@@ -90,10 +90,10 @@ impl ArrayFace {
     }
 }
 
-impl ArrayCube {
+impl Cube {
 
     pub fn new(faces : [Color; 6]) -> Self {
-        ArrayCube {
+        Cube {
             faces: [
                 ArrayFace::new(faces[0]),
                 ArrayFace::new(faces[1]),
@@ -106,7 +106,7 @@ impl ArrayCube {
     }
 
     pub fn random() -> Self {
-        let mut cube = ArrayCube::default();
+        let mut cube = Cube::default();
         for _ in 0..500 {
             cube.rotate_right();
             cube.move_r();
@@ -116,7 +116,7 @@ impl ArrayCube {
     }
 
     pub fn default() -> Self {
-        ArrayCube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN])
+        Cube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN])
     }
 
     fn find_face(self, face_orientation : FaceOrientation) -> ArrayFace {
@@ -624,7 +624,7 @@ impl ArrayCube {
     }
 
     fn find_ansi_string(&self, face : usize, x : usize, y : usize) -> ansi_term::ANSIString<'static> {
-        ArrayCube::ansi_format_convert(match self.faces[face].squares[x][y] {
+        Cube::ansi_format_convert(match self.faces[face].squares[x][y] {
             Color::RED => ansi_term::Colour::RGB(255, 0, 0),
             Color::YELLOW => ansi_term::Colour::RGB(255, 255, 0),
             Color::WHITE => ansi_term::Colour::White,
@@ -648,37 +648,37 @@ impl ArrayCube {
     }
     fn ansi_format(&self) {
         let strings : &[ansi_term::ANSIString<'static>] = &[
-        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 0, 0), self.find_ansi_string(0, 0, 1), self.find_ansi_string(0, 0, 2), ArrayCube::ansi_newline(),
-        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 1, 0), self.find_ansi_string(0, 1, 1), self.find_ansi_string(0, 1, 2), ArrayCube::ansi_newline(),
-        ArrayCube::ansi_prefix(), self.find_ansi_string(0, 2, 0), self.find_ansi_string(0, 2, 1), self.find_ansi_string(0, 2, 2), ArrayCube::ansi_newline(),
+        Cube::ansi_prefix(), self.find_ansi_string(0, 0, 0), self.find_ansi_string(0, 0, 1), self.find_ansi_string(0, 0, 2), Cube::ansi_newline(),
+        Cube::ansi_prefix(), self.find_ansi_string(0, 1, 0), self.find_ansi_string(0, 1, 1), self.find_ansi_string(0, 1, 2), Cube::ansi_newline(),
+        Cube::ansi_prefix(), self.find_ansi_string(0, 2, 0), self.find_ansi_string(0, 2, 1), self.find_ansi_string(0, 2, 2), Cube::ansi_newline(),
         //first long row
         self.find_ansi_string(1, 0, 0), self.find_ansi_string(1, 0, 1), self.find_ansi_string(1, 0, 2),
         self.find_ansi_string(2, 0, 0), self.find_ansi_string(2, 0, 1), self.find_ansi_string(2, 0, 2),
         self.find_ansi_string(3, 0, 0), self.find_ansi_string(3, 0, 1), self.find_ansi_string(3, 0, 2),
         self.find_ansi_string(4, 0, 0), self.find_ansi_string(4, 0, 1), self.find_ansi_string(4, 0, 2),
-        ArrayCube::ansi_newline(),
+        Cube::ansi_newline(),
         //second long row
         self.find_ansi_string(1, 1, 0), self.find_ansi_string(1, 1, 1), self.find_ansi_string(1, 1, 2),
         self.find_ansi_string(2, 1, 0), self.find_ansi_string(2, 1, 1), self.find_ansi_string(2, 1, 2),
         self.find_ansi_string(3, 1, 0), self.find_ansi_string(3, 1, 1), self.find_ansi_string(3, 1, 2),
         self.find_ansi_string(4, 1, 0), self.find_ansi_string(4, 1, 1), self.find_ansi_string(4, 1, 2),
-        ArrayCube::ansi_newline(),
+        Cube::ansi_newline(),
         //third long row
         self.find_ansi_string(1, 2, 0), self.find_ansi_string(1, 2, 1), self.find_ansi_string(1, 2, 2),
         self.find_ansi_string(2, 2, 0), self.find_ansi_string(2, 2, 1), self.find_ansi_string(2, 2, 2),
         self.find_ansi_string(3, 2, 0), self.find_ansi_string(3, 2, 1), self.find_ansi_string(3, 2, 2),
         self.find_ansi_string(4, 2, 0), self.find_ansi_string(4, 2, 1), self.find_ansi_string(4, 2, 2),
-        ArrayCube::ansi_newline(),
+        Cube::ansi_newline(),
         //last row
-        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 0, 0), self.find_ansi_string(5, 0, 1), self.find_ansi_string(5, 0, 2), ArrayCube::ansi_newline(),
-        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 1, 0), self.find_ansi_string(5, 1, 1), self.find_ansi_string(5, 1, 2), ArrayCube::ansi_newline(),
-        ArrayCube::ansi_prefix(), self.find_ansi_string(5, 2, 0), self.find_ansi_string(5, 2, 1), self.find_ansi_string(5, 2, 2)
+        Cube::ansi_prefix(), self.find_ansi_string(5, 0, 0), self.find_ansi_string(5, 0, 1), self.find_ansi_string(5, 0, 2), Cube::ansi_newline(),
+        Cube::ansi_prefix(), self.find_ansi_string(5, 1, 0), self.find_ansi_string(5, 1, 1), self.find_ansi_string(5, 1, 2), Cube::ansi_newline(),
+        Cube::ansi_prefix(), self.find_ansi_string(5, 2, 0), self.find_ansi_string(5, 2, 1), self.find_ansi_string(5, 2, 2)
             ];
         println!("{}", ansi_term::ANSIStrings(strings));
     }
 }
 
-impl fmt::Display for ArrayCube {
+impl fmt::Display for Cube {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let prefix = "    ";
         write!(f,
@@ -722,7 +722,7 @@ impl fmt::Display for ArrayCube {
 #[cfg(test)]
 mod tests {
     use super::Color::*;
-    use super::ArrayCube;
+    use super::Cube;
 
     mod edges {
         use super::super::*;
@@ -731,7 +731,7 @@ mod tests {
                 $(
                     #[test]
                     fn $name() {
-                        let cube = ArrayCube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
+                        let cube = Cube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
                         let expected = $value;
                         assert_eq!(expected, cube.find_edge(expected.side1.color, expected.side2.color));
                     }
@@ -796,7 +796,7 @@ mod tests {
     #[test]
     fn rotate_down() {
         //down should undo up
-        let cube = ArrayCube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
+        let cube = Cube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
         let mut cube_to_rotate = cube.clone();
         cube_to_rotate.orientation_rotate_up();
         cube_to_rotate.orientation_rotate_down();
@@ -808,41 +808,41 @@ mod tests {
 
     #[test]
     fn rotate_up() {
-        let mut cube = ArrayCube::new([RED, BLUE, WHITE, GREEN, YELLOW, ORANGE]);
+        let mut cube = Cube::new([RED, BLUE, WHITE, GREEN, YELLOW, ORANGE]);
         cube.orientation_rotate_up();
         assert_eq!(
             format!("{}", cube),
-            format!("{}", ArrayCube::new([WHITE, BLUE, ORANGE, GREEN, RED, YELLOW])),
+            format!("{}", Cube::new([WHITE, BLUE, ORANGE, GREEN, RED, YELLOW])),
         );
     }
 
     #[test]
     fn orientation_rotate_right() {
-        let mut cube = ArrayCube::new([RED, GREEN, YELLOW, BLUE, WHITE, ORANGE]);
+        let mut cube = Cube::new([RED, GREEN, YELLOW, BLUE, WHITE, ORANGE]);
         cube.orientation_rotate_right();
         //   1           1
         //  2345   ---> 3452
         //   6           6
         assert_eq!(
             format!("{}", cube),
-            format!("{}", ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE])),
+            format!("{}", Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE])),
         );
     }
 
     #[test]
     fn rotate_right() {
-        let mut cube = ArrayCube::new([BLUE, YELLOW, ORANGE, WHITE, RED, GREEN]);
+        let mut cube = Cube::new([BLUE, YELLOW, ORANGE, WHITE, RED, GREEN]);
         cube.rotate_right();
         assert_eq!(
             format!("{}", cube),
-            format!("{}", ArrayCube::new([YELLOW, GREEN, ORANGE, BLUE, RED, WHITE])),
+            format!("{}", Cube::new([YELLOW, GREEN, ORANGE, BLUE, RED, WHITE])),
         );
     }
 
     #[test]
     fn rotate_left() {
         //left should undo right
-        let cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         let mut cube_to_rotate = cube.clone();
         cube_to_rotate.orientation_rotate_right();
         cube_to_rotate.orientation_rotate_left();
@@ -854,7 +854,7 @@ mod tests {
 
     #[test]
     fn move_f() {
-        let mut cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let mut cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         cube.print();
         cube.move_f();
         let prefix = "    ";
@@ -874,7 +874,7 @@ println!("{}", expected);
     #[test]
     fn move_fi() {
         //ui should undo u
-        let cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         let mut cube_to_move = cube.clone();
         cube_to_move.move_f();
         cube_to_move.move_fi();
@@ -895,7 +895,7 @@ println!("{}", expected);
         //    |YYY|                 |YYG|
         //    |YYY|                 |YYG|
         //    |YYY|                 |YYG|
-        let mut cube = ArrayCube::new([WHITE, RED, BLUE, ORANGE, GREEN, YELLOW]);
+        let mut cube = Cube::new([WHITE, RED, BLUE, ORANGE, GREEN, YELLOW]);
         cube.print();
         cube.move_r();
         println!("--------");
@@ -948,7 +948,7 @@ println!("{}", expected);
         |OOO|
         |OOO|
     */
-        let cube = ArrayCube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN]);
+        let cube = Cube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN]);
         let mut scrambled_cube = cube.clone();
         scrambled_cube.move_ri();
         scrambled_cube.rotate_right();
@@ -971,7 +971,7 @@ println!("{}", expected);
 
     #[test]
     fn move_ri_rotate_right_multiple_times() {
-        let mut cube = ArrayCube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN]);
+        let mut cube = Cube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN]);
         for _ in 0..6 {
             cube.move_r();
             cube.rotate_right();
@@ -995,7 +995,7 @@ println!("{}", expected);
 
     #[test]
     fn mix_and_fix_r() {
-        let cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 
@@ -1012,7 +1012,7 @@ println!("{}", expected);
 
     #[test]
     fn mix_and_fix_l() {
-        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 
@@ -1028,7 +1028,7 @@ println!("{}", expected);
     }
     #[test]
     fn mix_and_fix_f() {
-        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 
@@ -1045,7 +1045,7 @@ println!("{}", expected);
 
     #[test]
     fn mix_and_fix_b() {
-        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 
@@ -1062,7 +1062,7 @@ println!("{}", expected);
 
     #[test]
     fn mix_and_fix_u() {
-        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 
@@ -1079,7 +1079,7 @@ println!("{}", expected);
 
     #[test]
     fn mix_and_fix_d() {
-        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
 

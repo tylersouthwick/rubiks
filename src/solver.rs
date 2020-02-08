@@ -1,10 +1,10 @@
-use crate::array_cube::ArrayCube;
+use crate::array_cube::Cube;
 use crate::cube::FaceOrientation::*;
 use crate::cube::Color;
 use crate::cube::Color::*;
 use crate::mover;
 
-fn move_top_cross_edge(cube : &mut ArrayCube, color : Color) {
+fn move_top_cross_edge(cube : &mut Cube, color : Color) {
     let edge = cube.find_edge(WHITE, color);
 
     match (edge.side1.face_orientation, edge.side2.face_orientation) {
@@ -18,7 +18,7 @@ fn move_top_cross_edge(cube : &mut ArrayCube, color : Color) {
     }
 }
 
-fn top_cross(cube : &mut ArrayCube) {
+fn top_cross(cube : &mut Cube) {
     mover::orient_cube(cube, UP, WHITE);
     //let center_color = cube.findFace(UP);
     //println!("cetner_color: {}", center_color)
@@ -28,7 +28,7 @@ fn top_cross(cube : &mut ArrayCube) {
     }
 }
 
-pub fn solve(cube : &mut ArrayCube) {
+pub fn solve(cube : &mut Cube) {
     println!("solve!");
     cube.ansi_print();
     top_cross(cube);
@@ -39,14 +39,14 @@ pub fn solve(cube : &mut ArrayCube) {
 #[cfg(test)]
 mod tests {
 
-    use crate::array_cube::ArrayCube;
+    use crate::array_cube::Cube;
     use crate::cube::Color::*;
     use super::*;
 
     #[test]
     fn move_top_center() {
         /*
-        let mut cube = ArrayCube::new([WHITE, RED, BLUE, ORANGE, GREEN, YELLOW]);
+        let mut cube = Cube::new([WHITE, RED, BLUE, ORANGE, GREEN, YELLOW]);
         cube.move_b();
         cube.move_b();
         cube.ansi_print();
