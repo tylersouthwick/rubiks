@@ -620,17 +620,17 @@ impl ArrayCube {
     }
 
     fn ansi_format_convert(color : ansi_term::Colour) -> ansi_term::ANSIString<'static> {
-            ansi_term::Style::new().on(color).fg(ansi_term::Colour::Black).paint(" ")
+            ansi_term::Style::new().on(color).fg(ansi_term::Colour::Black).paint("  ")
     }
 
     fn find_ansi_string(&self, face : usize, x : usize, y : usize) -> ansi_term::ANSIString<'static> {
         ArrayCube::ansi_format_convert(match self.faces[face].squares[x][y] {
-            Color::RED => ansi_term::Colour::Red,
-            Color::YELLOW => ansi_term::Colour::Yellow,
+            Color::RED => ansi_term::Colour::RGB(255, 0, 0),
+            Color::YELLOW => ansi_term::Colour::RGB(255, 255, 0),
             Color::WHITE => ansi_term::Colour::White,
-            Color::GREEN => ansi_term::Colour::Green,
-            Color::BLUE => ansi_term::Colour::Blue,
-            Color::ORANGE => ansi_term::Colour::Purple,
+            Color::GREEN => ansi_term::Colour::RGB(0, 255, 0),
+            Color::BLUE => ansi_term::Colour::RGB(0, 0, 255),
+            Color::ORANGE => ansi_term::Colour::RGB(255, 100, 0),
         })
     }
 
@@ -641,7 +641,7 @@ impl ArrayCube {
     }
 
     fn ansi_prefix<'a>() -> ansi_term::ANSIString<'a> {
-        ansi_term::Style::new().paint("   ")
+        ansi_term::Style::new().paint("      ")
     }
     fn ansi_newline<'a>() -> ansi_term::ANSIString<'a> {
         ansi_term::Style::new().paint("\n")
