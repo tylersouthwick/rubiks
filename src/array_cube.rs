@@ -7,6 +7,13 @@ use crate::cube::FaceOrientation;
 use crate::cube::FaceOrientation::*;
 use crate::cube::RotationDirection;
 
+const UP_FACE : usize = 0;
+const LEFT_FACE : usize = 1;
+const FRONT_FACE : usize = 2;
+const RIGHT_FACE : usize = 3;
+const BACK_FACE : usize = 4;
+const DOWN_FACE : usize = 5;
+
 #[derive(Clone, Copy, Debug, PartialEq)]
 struct ArrayFace {
     squares: [[Color; 3]; 3 ]
@@ -149,13 +156,21 @@ impl ArrayCube {
                 let square_color = face.squares[square[0]][square[1]];
                 let adjacent_piece = self.find_adjacent_edge_piece(face_orientation, square[0], square[1]);
 
-                if (square_color == color1 && adjacent_piece.color  == color2) || (square_color == color2 && adjacent_piece.color == color1) {
+                if (square_color == color1 && adjacent_piece.color  == color2) {
                     return Edge {
                         side1: EdgePiece {
                             color: square_color,
                             face_orientation: face_orientation
                         },
                         side2: adjacent_piece
+                    }
+                } else if (square_color == color2 && adjacent_piece.color == color1) {
+                    return Edge {
+                        side2: EdgePiece {
+                            color: square_color,
+                            face_orientation: face_orientation
+                        },
+                        side1: adjacent_piece
                     }
                 }
 
@@ -279,13 +294,13 @@ impl ArrayCube {
         let right2 = self.faces[3].squares[1][0];
         let right3 = self.faces[3].squares[2][0];
 
-        let bottom1 = self.faces[5].squares[0][0];
-        let bottom2 = self.faces[5].squares[0][1];
-        let bottom3 = self.faces[5].squares[0][2];
+        let down1 = self.faces[5].squares[0][0];
+        let down2 = self.faces[5].squares[0][1];
+        let down3 = self.faces[5].squares[0][2];
 
-        self.faces[1].squares[0][2] = bottom1;
-        self.faces[1].squares[1][2] = bottom2;
-        self.faces[1].squares[2][2] = bottom3;
+        self.faces[1].squares[0][2] = down1;
+        self.faces[1].squares[1][2] = down2;
+        self.faces[1].squares[2][2] = down3;
 
         self.faces[0].squares[2][0] = left3;
         self.faces[0].squares[2][1] = left2;
@@ -308,13 +323,204 @@ impl ArrayCube {
         self.move_f();
     }
 
+    pub fn move_ui(&mut self) {
+        self.move_u();
+        self.move_u();
+        self.move_u();
+    }
+
     pub fn move_u(&mut self) {
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //|BBB|WWW|GGG|YYY|     |WWW|GGG|YYY|BBB|
+        //|BBB|WWW|GGG|YYY| --> |BBB|WWW|GGG|YYY|
+        //|BBB|WWW|GGG|YYY|     |BBB|WWW|GGG|YYY|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        let front0 = self.faces[FRONT_FACE].squares[0][0];
+        let front1 = self.faces[FRONT_FACE].squares[0][1];
+        let front2 = self.faces[FRONT_FACE].squares[0][2];
+
+        let left0 = self.faces[LEFT_FACE].squares[0][0];
+        let left1 = self.faces[LEFT_FACE].squares[0][1];
+        let left2 = self.faces[LEFT_FACE].squares[0][2];
+
+        let back0 = self.faces[BACK_FACE].squares[0][0];
+        let back1 = self.faces[BACK_FACE].squares[0][1];
+        let back2 = self.faces[BACK_FACE].squares[0][2];
+
+        let right0 = self.faces[RIGHT_FACE].squares[0][0];
+        let right1 = self.faces[RIGHT_FACE].squares[0][1];
+        let right2 = self.faces[RIGHT_FACE].squares[0][2];
+
+        self.faces[LEFT_FACE].squares[0][0] = front0;
+        self.faces[LEFT_FACE].squares[0][1] = front1;
+        self.faces[LEFT_FACE].squares[0][2] = front2;
+
+        self.faces[FRONT_FACE].squares[0][0] = right0;
+        self.faces[FRONT_FACE].squares[0][1] = right1;
+        self.faces[FRONT_FACE].squares[0][2] = right2;
+
+        self.faces[RIGHT_FACE].squares[0][0] = back0;
+        self.faces[RIGHT_FACE].squares[0][1] = back1;
+        self.faces[RIGHT_FACE].squares[0][2] = back2;
+
+        self.faces[BACK_FACE].squares[0][0] = left0;
+        self.faces[BACK_FACE].squares[0][1] = left1;
+        self.faces[BACK_FACE].squares[0][2] = left2;
+
+        self.faces[UP_FACE].rotate_left();
+    }
+    pub fn move_di(&mut self) {
+        self.move_d();
+        self.move_d();
+        self.move_d();
     }
     pub fn move_d(&mut self) {
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //|BBB|WWW|GGG|YYY|     |BBB|WWW|GGG|YYY|
+        //|BBB|WWW|GGG|YYY| --> |BBB|WWW|GGG|YYY|
+        //|BBB|WWW|GGG|YYY|     |WWW|GGG|YYY|BBB|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        let front0 = self.faces[FRONT_FACE].squares[2][0];
+        let front1 = self.faces[FRONT_FACE].squares[2][1];
+        let front2 = self.faces[FRONT_FACE].squares[2][2];
+
+        let left0 = self.faces[LEFT_FACE].squares[2][0];
+        let left1 = self.faces[LEFT_FACE].squares[2][1];
+        let left2 = self.faces[LEFT_FACE].squares[2][2];
+
+        let back0 = self.faces[BACK_FACE].squares[2][0];
+        let back1 = self.faces[BACK_FACE].squares[2][1];
+        let back2 = self.faces[BACK_FACE].squares[2][2];
+
+        let right0 = self.faces[RIGHT_FACE].squares[2][0];
+        let right1 = self.faces[RIGHT_FACE].squares[2][1];
+        let right2 = self.faces[RIGHT_FACE].squares[2][2];
+
+        self.faces[LEFT_FACE].squares[2][0] = front0;
+        self.faces[LEFT_FACE].squares[2][1] = front1;
+        self.faces[LEFT_FACE].squares[2][2] = front2;
+
+        self.faces[FRONT_FACE].squares[2][0] = right0;
+        self.faces[FRONT_FACE].squares[2][1] = right1;
+        self.faces[FRONT_FACE].squares[2][2] = right2;
+
+        self.faces[RIGHT_FACE].squares[2][0] = back0;
+        self.faces[RIGHT_FACE].squares[2][1] = back1;
+        self.faces[RIGHT_FACE].squares[2][2] = back2;
+
+        self.faces[BACK_FACE].squares[2][0] = left0;
+        self.faces[BACK_FACE].squares[2][1] = left1;
+        self.faces[BACK_FACE].squares[2][2] = left2;
+
+        self.faces[DOWN_FACE].rotate_left();
+    }
+    pub fn move_bi(&mut self) {
+        self.move_b();
+        self.move_b();
+        self.move_b();
     }
     pub fn move_b(&mut self) {
+        //    |RRR|                 |GGG|
+        //    |RRR|                 |RRR|
+        //    |RRR|                 |RRR|
+        //|BBB|WWW|GGG|YYY|     |RBB|WWW|GGG|YYO|
+        //|BBB|WWW|GGG|YYY| --> |RBB|WWW|GGG|YYO|
+        //|BBB|WWW|GGG|YYY|     |RBB|WWW|GGG|YYO|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |OOO|
+        //    |OOO|                 |BBB|
+        let up0 = self.faces[UP_FACE].squares[0][0];
+        let up1 = self.faces[UP_FACE].squares[0][1];
+        let up2 = self.faces[UP_FACE].squares[0][2];
+
+        let left0 = self.faces[LEFT_FACE].squares[0][0];
+        let left1 = self.faces[LEFT_FACE].squares[1][0];
+        let left2 = self.faces[LEFT_FACE].squares[2][0];
+
+        let down0 = self.faces[DOWN_FACE].squares[2][0];
+        let down1 = self.faces[DOWN_FACE].squares[2][1];
+        let down2 = self.faces[DOWN_FACE].squares[2][2];
+
+        let right0 = self.faces[RIGHT_FACE].squares[0][2];
+        let right1 = self.faces[RIGHT_FACE].squares[1][2];
+        let right2 = self.faces[RIGHT_FACE].squares[2][2];
+
+        self.faces[LEFT_FACE].squares[0][0] = up0;
+        self.faces[LEFT_FACE].squares[1][0] = up1;
+        self.faces[LEFT_FACE].squares[2][0] = up2;
+
+        self.faces[UP_FACE].squares[0][0] = right0;
+        self.faces[UP_FACE].squares[0][1] = right1;
+        self.faces[UP_FACE].squares[0][2] = right2;
+
+        self.faces[RIGHT_FACE].squares[0][2] = down0;
+        self.faces[RIGHT_FACE].squares[1][2] = down1;
+        self.faces[RIGHT_FACE].squares[2][2] = down2;
+
+        self.faces[DOWN_FACE].squares[2][0] = left0;
+        self.faces[DOWN_FACE].squares[2][1] = left1;
+        self.faces[DOWN_FACE].squares[2][2] = left2;
+
+        self.faces[BACK_FACE].rotate_left();
     }
+
+    pub fn move_li(&mut self) {
+        self.move_l();
+        self.move_l();
+        self.move_l();
+    }
+
     pub fn move_l(&mut self) {
+        //    |RRR|                 |YRR|
+        //    |RRR|                 |YRR|
+        //    |RRR|                 |YRR|
+        //|BBB|WWW|GGG|YYY|     |BBB|RWW|GGG|YYO|
+        //|BBB|WWW|GGG|YYY| --> |BBB|RWW|GGG|YYO|
+        //|BBB|WWW|GGG|YYY|     |BBB|RWW|GGG|YYO|
+        //    |OOO|                 |WOO|
+        //    |OOO|                 |WOO|
+        //    |OOO|                 |WOO|
+        let up0 = self.faces[UP_FACE].squares[0][0];
+        let up1 = self.faces[UP_FACE].squares[1][0];
+        let up2 = self.faces[UP_FACE].squares[2][0];
+
+        let back0 = self.faces[BACK_FACE].squares[0][0];
+        let back1 = self.faces[BACK_FACE].squares[1][0];
+        let back2 = self.faces[BACK_FACE].squares[2][0];
+
+        let down0 = self.faces[DOWN_FACE].squares[0][0];
+        let down1 = self.faces[DOWN_FACE].squares[1][0];
+        let down2 = self.faces[DOWN_FACE].squares[2][0];
+
+        let front0 = self.faces[FRONT_FACE].squares[0][0];
+        let front1 = self.faces[FRONT_FACE].squares[1][0];
+        let front2 = self.faces[FRONT_FACE].squares[2][0];
+
+        self.faces[FRONT_FACE].squares[0][0] = up0;
+        self.faces[FRONT_FACE].squares[1][0] = up1;
+        self.faces[FRONT_FACE].squares[2][0] = up2;
+
+        self.faces[UP_FACE].squares[0][0] = back2;
+        self.faces[UP_FACE].squares[1][0] = back1;
+        self.faces[UP_FACE].squares[2][0] = back0;
+
+        self.faces[DOWN_FACE].squares[0][0] = front0;
+        self.faces[DOWN_FACE].squares[1][0] = front1;
+        self.faces[DOWN_FACE].squares[2][0] = front2;
+
+        self.faces[BACK_FACE].squares[0][0] = down0;
+        self.faces[BACK_FACE].squares[1][0] = down1;
+        self.faces[BACK_FACE].squares[2][0] = down2;
+
+        self.faces[LEFT_FACE].rotate_right();
     }
 
     pub fn move_r(&mut self) {
@@ -335,17 +541,17 @@ impl ArrayCube {
         let right2 = self.faces[4].squares[1][0];
         let right3 = self.faces[4].squares[2][0];
 
-        let bottom1 = self.faces[5].squares[0][2];
-        let bottom2 = self.faces[5].squares[1][2];
-        let bottom3 = self.faces[5].squares[2][2];
+        let down1 = self.faces[5].squares[0][2];
+        let down2 = self.faces[5].squares[1][2];
+        let down3 = self.faces[5].squares[2][2];
 
         let center02 = self.faces[2].squares[0][2];
         let center12 = self.faces[2].squares[1][2];
         let center22 = self.faces[2].squares[2][2];
 
-        self.faces[2].squares[0][2] = bottom1;
-        self.faces[2].squares[1][2] = bottom2;
-        self.faces[2].squares[2][2] = bottom3;
+        self.faces[2].squares[0][2] = down1;
+        self.faces[2].squares[1][2] = down2;
+        self.faces[2].squares[2][2] = down3;
 
         self.faces[0].squares[0][2] = center02;
         self.faces[0].squares[1][2] = center12;
@@ -431,6 +637,7 @@ impl ArrayCube {
     pub fn ansi_print(&self) {
         //print!("{}", self.ansi_format())
         self.ansi_format();
+        //self.print();
     }
 
     fn ansi_prefix<'a>() -> ansi_term::ANSIString<'a> {
@@ -787,7 +994,7 @@ println!("{}", expected);
     }
 
     #[test]
-    fn mix_and_fix() {
+    fn mix_and_fix_r() {
         let cube = ArrayCube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
         let mut mixed_cube = cube.clone();
         let count = 15;
@@ -798,6 +1005,90 @@ println!("{}", expected);
         }
         for _ in 0..count {
             mixed_cube.move_ri();
+            mixed_cube.orientation_rotate_right();
+        }
+        assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
+    }
+
+    #[test]
+    fn mix_and_fix_l() {
+        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut mixed_cube = cube.clone();
+        let count = 15;
+
+        for _ in 0..count {
+            mixed_cube.orientation_rotate_left();
+            mixed_cube.move_l();
+        }
+        for _ in 0..count {
+            mixed_cube.move_li();
+            mixed_cube.orientation_rotate_right();
+        }
+        assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
+    }
+    #[test]
+    fn mix_and_fix_f() {
+        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut mixed_cube = cube.clone();
+        let count = 15;
+
+        for _ in 0..count {
+            mixed_cube.orientation_rotate_left();
+            mixed_cube.move_f();
+        }
+        for _ in 0..count {
+            mixed_cube.move_fi();
+            mixed_cube.orientation_rotate_right();
+        }
+        assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
+    }
+
+    #[test]
+    fn mix_and_fix_b() {
+        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut mixed_cube = cube.clone();
+        let count = 15;
+
+        for _ in 0..count {
+            mixed_cube.orientation_rotate_left();
+            mixed_cube.move_b();
+        }
+        for _ in 0..count {
+            mixed_cube.move_bi();
+            mixed_cube.orientation_rotate_right();
+        }
+        assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
+    }
+
+    #[test]
+    fn mix_and_fix_u() {
+        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut mixed_cube = cube.clone();
+        let count = 15;
+
+        for _ in 0..count {
+            mixed_cube.orientation_rotate_left();
+            mixed_cube.move_u();
+        }
+        for _ in 0..count {
+            mixed_cube.move_ui();
+            mixed_cube.orientation_rotate_right();
+        }
+        assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
+    }
+
+    #[test]
+    fn mix_and_fix_d() {
+        let cube = ArrayCube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
+        let mut mixed_cube = cube.clone();
+        let count = 15;
+
+        for _ in 0..count {
+            mixed_cube.orientation_rotate_left();
+            mixed_cube.move_d();
+        }
+        for _ in 0..count {
+            mixed_cube.move_di();
             mixed_cube.orientation_rotate_right();
         }
         assert_eq!(format!("{}", cube), format!("{}", mixed_cube));
