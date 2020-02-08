@@ -8,9 +8,10 @@ mod mover;
 
 fn main() {
     let mut cube = array_cube::ArrayCube::default();//random();
+    cube.move_r();
     cube.ansi_print();
-    //solver::solve(&mut cube);
-    println!("Hello, world!");
+    solver::solve(&mut cube);
+    cube.ansi_print();
 
     /*
     let mut mixed_cube = cube.clone();

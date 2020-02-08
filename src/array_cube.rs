@@ -156,7 +156,7 @@ impl ArrayCube {
                 let square_color = face.squares[square[0]][square[1]];
                 let adjacent_piece = self.find_adjacent_edge_piece(face_orientation, square[0], square[1]);
 
-                if (square_color == color1 && adjacent_piece.color  == color2) {
+                if square_color == color1 && adjacent_piece.color  == color2 {
                     return Edge {
                         side1: EdgePiece {
                             color: square_color,
@@ -164,7 +164,7 @@ impl ArrayCube {
                         },
                         side2: adjacent_piece
                     }
-                } else if (square_color == color2 && adjacent_piece.color == color1) {
+                } else if square_color == color2 && adjacent_piece.color == color1 {
                     return Edge {
                         side2: EdgePiece {
                             color: square_color,
