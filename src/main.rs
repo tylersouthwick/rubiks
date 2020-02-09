@@ -5,6 +5,7 @@ mod cube;
 mod array_cube;
 mod solver;
 mod mover;
+mod terminal_render;
 
 fn main() {
     let mut cube = array_cube::Cube::default();//random();
