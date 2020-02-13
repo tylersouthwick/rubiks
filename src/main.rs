@@ -1,11 +1,14 @@
 
 extern crate ansi_term;
+#[macro_use]
+extern crate lazy_static;
 
 mod cube;
 mod array_cube;
 mod solver;
 mod mover;
 mod terminal_render;
+mod cubies;
 
 fn main() {
     let mut cube = array_cube::Cube::default();//random();

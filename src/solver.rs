@@ -23,8 +23,8 @@ fn top_cross(cube : &mut Cube) {
     //let center_color = cube.findFace(UP);
     //println!("cetner_color: {}", center_color)
     //move top edge
-    for edge in vec![ORANGE, RED, BLUE, GREEN] {
-        move_top_cross_edge(cube, edge)
+    for edge in &[ORANGE, RED, BLUE, GREEN] {
+        move_top_cross_edge(cube, *edge)
     }
 }
 
@@ -38,10 +38,6 @@ pub fn solve(cube : &mut Cube) {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::array_cube::Cube;
-    use crate::cube::Color::*;
-    use super::*;
 
     #[test]
     fn move_top_center() {

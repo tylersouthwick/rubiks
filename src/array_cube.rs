@@ -5,7 +5,6 @@ use crate::cube::Color;
 use crate::cube::Color::*;
 use crate::cube::FaceOrientation;
 use crate::cube::FaceOrientation::*;
-use crate::cube::RotationDirection;
 use crate::terminal_render::ansi_print;
 
 const UP_FACE : usize = 0;
@@ -152,8 +151,8 @@ impl Cube {
     pub fn find_edge(self, color1 : Color, color2 : Color) -> Edge {
         for face_index in 0..5 {
             let face = self.faces[face_index];
-            let face_orientation = FaceOrientation::fromIndex(face_index);
-            for square in vec![[0, 1], [1, 0], [1, 2], [2, 1]] {
+            let face_orientation = FaceOrientation::from_index(face_index);
+            for square in &[[0, 1], [1, 0], [1, 2], [2, 1]] {
                 let square_color = face.squares[square[0]][square[1]];
                 let adjacent_piece = self.find_adjacent_edge_piece(face_orientation, square[0], square[1]);
 
@@ -161,7 +160,7 @@ impl Cube {
                     return Edge {
                         side1: EdgePiece {
                             color: square_color,
-                            face_orientation: face_orientation
+                            face_orientation
                         },
                         side2: adjacent_piece
                     }
@@ -169,7 +168,7 @@ impl Cube {
                     return Edge {
                         side2: EdgePiece {
                             color: square_color,
-                            face_orientation: face_orientation
+                            face_orientation,
                         },
                         side1: adjacent_piece
                     }
@@ -575,7 +574,8 @@ impl Cube {
         self.move_r();
     }
 
-    pub fn twist(&mut self, face_orientation : FaceOrientation) {
+    /*
+    pub fn move(&mut self, face_orientation : FaceOrientation) {
         match face_orientation {
             RIGHT => self.move_r(),
             LEFT => self.move_l(),
@@ -585,7 +585,9 @@ impl Cube {
             UP => self.move_u(),
         }
     }
+    */
 
+    /*
     pub fn rotate(&mut self, rotation_direction : RotationDirection) {
         match rotation_direction {
             RotationDirection::RIGHT => self.orientation_rotate_right(),
@@ -594,9 +596,10 @@ impl Cube {
             RotationDirection::UP => self.orientation_rotate_up()
         }
     }
+    */
 
-    pub fn findFace(self, faceOrientation : FaceOrientation) -> Color {
-        match faceOrientation {
+    pub fn find_face_color(self, face_orientation : FaceOrientation) -> Color {
+        match face_orientation {
             RIGHT => self.faces[3].squares[1][1],
             LEFT => self.faces[1].squares[1][1],
             BACK => self.faces[4].squares[1][1],
@@ -606,16 +609,17 @@ impl Cube {
         }
     }
 
-    pub fn findCenter(self, color : Color) -> FaceOrientation {
+    pub fn find_center(self, color : Color) -> FaceOrientation {
         for i in 0..5 {
             if self.faces[i].squares[1][1] == color {
-                return FaceOrientation::fromIndex(i)
+                return FaceOrientation::from_index(i)
             }
         }
         println!("could not find color {}", color);
-        return FaceOrientation::DOWN;
+        FaceOrientation::DOWN
     }
 
+    #[cfg(test)]
     pub fn print(&self) {
         print!("{}", self)
     }
@@ -747,7 +751,7 @@ mod tests {
     fn rotate_down() {
         //down should undo up
         let cube = Cube::new([BLUE, ORANGE, WHITE, RED, YELLOW, GREEN]);
-        let mut cube_to_rotate = cube.clone();
+        let mut cube_to_rotate = cube;
         cube_to_rotate.orientation_rotate_up();
         cube_to_rotate.orientation_rotate_down();
         assert_eq!(
@@ -793,7 +797,7 @@ mod tests {
     fn rotate_left() {
         //left should undo right
         let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
-        let mut cube_to_rotate = cube.clone();
+        let mut cube_to_rotate = cube;
         cube_to_rotate.orientation_rotate_right();
         cube_to_rotate.orientation_rotate_left();
         assert_eq!(
@@ -825,7 +829,7 @@ println!("{}", expected);
     fn move_fi() {
         //ui should undo u
         let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
-        let mut cube_to_move = cube.clone();
+        let mut cube_to_move = cube;
         cube_to_move.move_f();
         cube_to_move.move_fi();
         assert_eq!(
@@ -899,7 +903,7 @@ println!("{}", expected);
         |OOO|
     */
         let cube = Cube::new([BLUE, RED, YELLOW, ORANGE, WHITE, GREEN]);
-        let mut scrambled_cube = cube.clone();
+        let mut scrambled_cube = cube;
         scrambled_cube.move_ri();
         scrambled_cube.rotate_right();
         println!("scrambled!");
@@ -946,7 +950,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_r() {
         let cube = Cube::new([RED, YELLOW, WHITE, GREEN, BLUE, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {
@@ -963,7 +967,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_l() {
         let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {
@@ -979,7 +983,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_f() {
         let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {
@@ -996,7 +1000,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_b() {
         let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {
@@ -1013,7 +1017,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_u() {
         let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {
@@ -1030,7 +1034,7 @@ println!("{}", expected);
     #[test]
     fn mix_and_fix_d() {
         let cube = Cube::new([RED, YELLOW, BLUE, WHITE, GREEN, ORANGE]);
-        let mut mixed_cube = cube.clone();
+        let mut mixed_cube = cube;
         let count = 15;
 
         for _ in 0..count {

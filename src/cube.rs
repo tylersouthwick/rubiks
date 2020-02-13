@@ -41,7 +41,7 @@ pub enum FaceOrientation {
 }
 
 impl FaceOrientation {
-    pub fn fromIndex(i : usize) -> FaceOrientation {
+    pub fn from_index(i : usize) -> FaceOrientation {
         match i {
             0 => FaceOrientation::UP,
             1 => FaceOrientation::LEFT,
